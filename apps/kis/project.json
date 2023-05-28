@@ -83,6 +83,7 @@
       "defaultConfiguration": "production",
       "options": {
         "outputPath": "dist/apps/kis",
+        "outputFileName": "server/main.js",
         "main": "apps/kis/server/main.ts",
         "tsConfig": "apps/kis/tsconfig.server.json",
         "clean": false,
