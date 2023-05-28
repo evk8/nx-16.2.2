@@ -6,7 +6,9 @@
   "targets": {
     "build": {
       "executor": "@nx/next:build",
-      "outputs": ["{options.outputPath}"],
+      "outputs": [
+        "{options.outputPath}"
+      ],
       "defaultConfiguration": "production",
       "options": {
         "root": "apps/kis",
@@ -17,23 +19,29 @@
           "outputPath": "apps/kis"
         },
         "production": {}
-      }
+      },
+      "dependsOn": [
+        "build-custom-server"
+      ]
     },
     "serve": {
       "executor": "@nx/next:server",
       "defaultConfiguration": "development",
       "options": {
         "buildTarget": "kis:build",
-        "dev": true
+        "dev": true,
+        "customServerTarget": "kis:serve-custom-server"
       },
       "configurations": {
         "development": {
           "buildTarget": "kis:build:development",
-          "dev": true
+          "dev": true,
+          "customServerTarget": "kis:serve-custom-server:development"
         },
         "production": {
           "buildTarget": "kis:build:production",
-          "dev": false
+          "dev": false,
+          "customServerTarget": "kis:serve-custom-server:production"
         }
       }
     },
@@ -45,7 +53,9 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": [
+        "{workspaceRoot}/coverage/{projectRoot}"
+      ],
       "options": {
         "jestConfig": "apps/kis/jest.config.ts",
         "passWithNoTests": true
@@ -59,9 +69,43 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
+      "outputs": [
+        "{options.outputFile}"
+      ],
       "options": {
-        "lintFilePatterns": ["apps/kis/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": [
+          "apps/kis/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "build-custom-server": {
+      "executor": "@nx/js:tsc",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/kis",
+        "main": "apps/kis/server/main.ts",
+        "tsConfig": "apps/kis/tsconfig.server.json",
+        "clean": false,
+        "assets": []
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "kis:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "kis:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "kis:build-custom-server:production"
+        }
       }
     }
   },
